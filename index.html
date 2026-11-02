@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=5" />
 </head>
 <body>
   <div class="ambient ambient-one"></div>
@@ -31,6 +31,7 @@
       <nav class="primary-nav" id="primaryNav">
         <a href="#programs">Programmes</a>
         <a href="#subjects">Subjects</a>
+        <a href="#courses">Courses</a>
         <a href="#approach">How I teach</a>
         <a href="#about">About</a>
         <a href="#work">My work</a>
@@ -191,6 +192,18 @@
           <article class="work-card reveal"><div class="work-art work-art-vision"><span class="vision-shape"></span><span class="work-art-label">GENERATIVE MODELLING</span><span class="vision-caption">VAE / IMAGE GENERATION</span></div><div class="work-card-copy"><div class="work-meta"><span>02 — GENERATIVE AI</span><span>PYTORCH / DL</span></div><h3>Variational Autoencoder</h3><p>Worked with a car-image dataset to explore latent representations and image generation.</p><a href="https://github.com/loveymishra" target="_blank" rel="noreferrer" class="text-link">Explore projects <b>↗</b></a></div></article>
           <article class="work-card reveal"><div class="work-art work-art-race"><span class="track-line"></span><span class="car-shape">F1</span><span class="work-art-label">COMPUTER VISION</span><span class="vision-caption">OBJECT DETECTION</span></div><div class="work-card-copy"><div class="work-meta"><span>03 — COMPUTER VISION</span><span>CNN · OPENCV</span></div><h3>F1 Car Detection</h3><p>Built a computer-vision project using a CNN workflow, OpenCV and a Streamlit interface.</p><a href="https://github.com/loveymishra/F1-car-detection-DL_str" target="_blank" rel="noreferrer" class="text-link">View project repository <b>↗</b></a></div></article>
         </div>
+
+        <aside class="youtube-promo reveal" aria-label="Free TensorSlow YouTube learning content">
+          <div class="youtube-promo-icon" aria-hidden="true"><span>▶</span></div>
+          <div class="youtube-promo-copy">
+            <span class="section-kicker">FREE LEARNING / TENSORSLOW ON YOUTUBE</span>
+            <h3>Want to learn more for free?</h3>
+            <p>Join me on YouTube for free content, explanations and practical learning around Python, AI, Machine Learning and more.</p>
+          </div>
+          <a class="button youtube-button" data-youtube-link href="https://www.youtube.com/@TensorSlow-x2q" target="_blank" rel="noopener noreferrer">
+            Join the YouTube channel <span>↗</span>
+          </a>
+        </aside>
       </div>
     </section>
 
@@ -231,6 +244,60 @@
     <div class="section-shell footer-main"><a class="brand" href="#top"><span class="brand-mark"><span></span><span></span><span></span></span><span class="brand-copy"><strong>TensorSlow</strong><small>ACADEMY</small></span></a><p>Learn the logic. Build the skill.<br /><span>© <span id="year"></span> Lovey Mishra. All rights reserved.</span></p><a href="#top" class="back-top">BACK TO TOP ↑</a></div>
   </footer>
 
-  <script src="./script.js?v=2" defer></script>
+  <script src="script.js?v=5" defer onload="window.TensorSlowScriptLoaded = true" onerror="window.TensorSlowScriptLoaded = false"></script>
+  <script>
+    // Fallback: keep essential interactions working if script.js is missing or blocked by the host.
+    (function () {
+      "use strict";
+      function fallbackInit() {
+        if (window.TensorSlowAcademyReady || window.TensorSlowScriptLoaded === true) return;
+        var root = document.documentElement;
+        root.setAttribute("data-js-loaded", "fallback");
+        root.setAttribute("data-js-source", "inline-fallback");
+        var toggle = document.getElementById("menuToggle");
+        var nav = document.getElementById("primaryNav");
+        if (toggle && nav) {
+          function closeNav() { nav.classList.remove("open"); toggle.setAttribute("aria-expanded", "false"); toggle.setAttribute("aria-label", "Open navigation"); }
+          toggle.addEventListener("click", function () { var open = nav.classList.toggle("open"); toggle.setAttribute("aria-expanded", String(open)); toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation"); });
+          nav.querySelectorAll("a").forEach(function (link) { link.addEventListener("click", closeNav); });
+          document.addEventListener("keydown", function (event) { if (event.key === "Escape") closeNav(); });
+          document.addEventListener("click", function (event) { if (nav.classList.contains("open") && !nav.contains(event.target) && !toggle.contains(event.target)) closeNav(); });
+        }
+        var cards = Array.prototype.slice.call(document.querySelectorAll(".subject-card"));
+        document.querySelectorAll(".filter-button").forEach(function (button) {
+          button.addEventListener("click", function () {
+            var filter = button.getAttribute("data-filter") || "all";
+            document.querySelectorAll(".filter-button").forEach(function (item) { var active = item === button; item.classList.toggle("active", active); item.setAttribute("aria-pressed", String(active)); });
+            var count = 0; cards.forEach(function (card) { var show = filter === "all" || card.getAttribute("data-category") === filter; card.classList.toggle("is-hidden", !show); if (show) count += 1; });
+            var empty = document.getElementById("filterEmpty"); if (empty) empty.hidden = count !== 0;
+          });
+        });
+        document.querySelectorAll(".faq-question").forEach(function (button) {
+          button.addEventListener("click", function () {
+            var item = button.closest(".faq-item"); if (!item) return; var open = !item.classList.contains("open");
+            document.querySelectorAll(".faq-item").forEach(function (other) { other.classList.remove("open"); var b = other.querySelector(".faq-question"); if (b) b.setAttribute("aria-expanded", "false"); });
+            if (open) { item.classList.add("open"); button.setAttribute("aria-expanded", "true"); }
+          });
+        });
+        var email = "loveymishra60@gmail.com"; var emailLink = document.getElementById("emailText");
+        if (emailLink) { emailLink.textContent = email; emailLink.href = "mailto:" + email; }
+        var whatsappLink = document.getElementById("whatsappText");
+        if (whatsappLink) { whatsappLink.textContent = "+916306207252"; whatsappLink.href = "https://wa.me/916306207252"; whatsappLink.target = "_blank"; whatsappLink.rel = "noopener noreferrer"; }
+        document.querySelectorAll("[data-youtube-link]").forEach(function (link) { link.href = "https://www.youtube.com/results?search_query=TensorSlow+Lovey+Mishra"; link.target = "_blank"; link.rel = "noopener noreferrer"; });
+        var year = document.getElementById("year"); if (year) year.textContent = String(new Date().getFullYear());
+        document.querySelectorAll(".reveal").forEach(function (item) { item.classList.add("visible"); });
+        var form = document.getElementById("contactForm"); var message = document.getElementById("formMessage");
+        if (form) form.addEventListener("submit", function (event) {
+          event.preventDefault(); if (!form.checkValidity()) { form.reportValidity(); return; }
+          var data = new FormData(form); var subject = "Teaching enquiry — " + (data.get("interest") || "General enquiry");
+          var body = ["Name: " + (data.get("name") || ""), "Level: " + (data.get("level") || ""), "Preferred format: " + (data.get("format") || ""), "Subject/course: " + (data.get("interest") || ""), "", "Goal / question:", data.get("message") || ""].join("\n");
+          window.location.href = "mailto:" + email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+          if (message) message.textContent = "Your email app should open with the enquiry filled in. Review the message and press Send.";
+        });
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fallbackInit, { once: true });
+      else fallbackInit();
+    })();
+  </script>
 </body>
 </html>
