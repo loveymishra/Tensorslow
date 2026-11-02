@@ -10,7 +10,9 @@
   var SITE_CONFIG = {
     email: "loveymishra60@gmail.com",
     // India example: 91 followed by your 10-digit mobile number. Digits only.
-    whatsapp: "+91 6306207252"
+    whatsapp: "+91 6306207252",
+    // Replace this YouTube search URL with the direct channel URL whenever you have its exact handle.
+    youtube: "https://www.youtube.com/@TensorSlow-x2q"
   };
 
   function onReady(callback) {
@@ -24,8 +26,13 @@
   function setUpNavigation() {
     var menuToggle = document.getElementById("menuToggle");
     var primaryNav = document.getElementById("primaryNav");
-
     if (!menuToggle || !primaryNav) return;
+
+    function closeMenu() {
+      primaryNav.classList.remove("open");
+      menuToggle.setAttribute("aria-expanded", "false");
+      menuToggle.setAttribute("aria-label", "Open navigation");
+    }
 
     menuToggle.addEventListener("click", function () {
       var isOpen = primaryNav.classList.toggle("open");
@@ -33,13 +40,22 @@
       menuToggle.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
     });
 
-    var navLinks = primaryNav.querySelectorAll("a");
-    Array.prototype.forEach.call(navLinks, function (link) {
-      link.addEventListener("click", function () {
-        primaryNav.classList.remove("open");
-        menuToggle.setAttribute("aria-expanded", "false");
-        menuToggle.setAttribute("aria-label", "Open navigation");
-      });
+    Array.prototype.forEach.call(primaryNav.querySelectorAll("a"), function (link) {
+      link.addEventListener("click", closeMenu);
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") closeMenu();
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!primaryNav.classList.contains("open")) return;
+      if (primaryNav.contains(event.target) || menuToggle.contains(event.target)) return;
+      closeMenu();
+    });
+
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 900) closeMenu();
     });
   }
 
@@ -47,7 +63,6 @@
     var filterButtons = document.querySelectorAll(".filter-button");
     var subjectCards = document.querySelectorAll(".subject-card");
     var filterEmpty = document.getElementById("filterEmpty");
-
     if (!filterButtons.length || !subjectCards.length) return;
 
     Array.prototype.forEach.call(filterButtons, function (button) {
@@ -82,9 +97,7 @@
         if (!item) return;
 
         var willOpen = !item.classList.contains("open");
-        var allItems = document.querySelectorAll(".faq-item");
-
-        Array.prototype.forEach.call(allItems, function (other) {
+        Array.prototype.forEach.call(document.querySelectorAll(".faq-item"), function (other) {
           other.classList.remove("open");
           var otherButton = other.querySelector(".faq-question");
           if (otherButton) otherButton.setAttribute("aria-expanded", "false");
@@ -110,8 +123,6 @@
 
         var options = interestSelect.options;
         var match = null;
-
-        // Prefer an exact match, then try a partial match.
         for (var i = 0; i < options.length; i += 1) {
           var optionText = (options[i].text || "").toLowerCase();
           var optionValue = (options[i].value || "").toLowerCase();
@@ -120,7 +131,6 @@
             break;
           }
         }
-
         if (!match) {
           for (var j = 0; j < options.length; j += 1) {
             var candidate = (options[j].text || "").toLowerCase();
@@ -130,7 +140,6 @@
             }
           }
         }
-
         if (match) interestSelect.value = match.value;
       });
     });
@@ -139,16 +148,14 @@
   function setUpContactDetails() {
     var emailText = document.getElementById("emailText");
     var whatsappText = document.getElementById("whatsappText");
-    var email = SITE_CONFIG.email;
-    var whatsapp = SITE_CONFIG.whatsapp;
 
-    if (emailText && email && email.indexOf("YOUR_EMAIL") === -1 && email.indexOf("@") > 0) {
-      emailText.textContent = email;
-      emailText.href = "mailto:" + email;
+    if (emailText && SITE_CONFIG.email && SITE_CONFIG.email.indexOf("@") > 0) {
+      emailText.textContent = SITE_CONFIG.email;
+      emailText.href = "mailto:" + SITE_CONFIG.email;
     }
 
-    if (whatsappText && whatsapp && !/X/i.test(whatsapp)) {
-      var cleanNumber = whatsapp.replace(/\D/g, "");
+    if (whatsappText && SITE_CONFIG.whatsapp) {
+      var cleanNumber = SITE_CONFIG.whatsapp.replace(/\D/g, "");
       if (cleanNumber) {
         whatsappText.textContent = "+" + cleanNumber;
         whatsappText.href = "https://wa.me/" + cleanNumber;
@@ -158,6 +165,16 @@
     }
   }
 
+  function setUpYouTubeLinks() {
+    var links = document.querySelectorAll("[data-youtube-link]");
+    if (!links.length || !SITE_CONFIG.youtube) return;
+    Array.prototype.forEach.call(links, function (link) {
+      link.href = SITE_CONFIG.youtube;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+    });
+  }
+
   function setUpContactForm() {
     var contactForm = document.getElementById("contactForm");
     var formMessage = document.getElementById("formMessage");
@@ -165,17 +182,8 @@
 
     contactForm.addEventListener("submit", function (event) {
       event.preventDefault();
-
       if (!contactForm.checkValidity()) {
         contactForm.reportValidity();
-        return;
-      }
-
-      var email = SITE_CONFIG.email;
-      if (!email || email.indexOf("YOUR_EMAIL") !== -1 || email.indexOf("@") < 1) {
-        if (formMessage) {
-          formMessage.textContent = "Please add your real email address in script.js before publishing. Your enquiry form is ready once this is configured.";
-        }
         return;
       }
 
@@ -191,9 +199,7 @@
         formData.get("message") || ""
       ].join("\n");
 
-      var mailto = "mailto:" + email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-      window.location.href = mailto;
-
+      window.location.href = "mailto:" + SITE_CONFIG.email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
       if (formMessage) {
         formMessage.textContent = "Your email app should open with the enquiry filled in. Review the message and press Send.";
       }
@@ -208,13 +214,9 @@
   function setUpRevealAnimations() {
     var revealItems = document.querySelectorAll(".reveal");
     var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // Mark JS as active only after this file has successfully executed.
     document.documentElement.classList.add("js-ready");
-    document.documentElement.setAttribute("data-js-loaded", "true");
 
     if (!revealItems.length) return;
-
     if ("IntersectionObserver" in window && !reduceMotion) {
       var observer = new IntersectionObserver(function (entries, currentObserver) {
         Array.prototype.forEach.call(entries, function (entry) {
@@ -224,34 +226,38 @@
           }
         });
       }, { threshold: 0.08 });
-
-      Array.prototype.forEach.call(revealItems, function (item) {
-        observer.observe(item);
-      });
+      Array.prototype.forEach.call(revealItems, function (item) { observer.observe(item); });
     } else {
-      Array.prototype.forEach.call(revealItems, function (item) {
-        item.classList.add("visible");
-      });
+      Array.prototype.forEach.call(revealItems, function (item) { item.classList.add("visible"); });
     }
   }
 
-  onReady(function () {
-    try {
-      setUpNavigation();
-      setUpSubjectFilters();
-      setUpFaq();
-      setUpInterestLinks();
-      setUpContactDetails();
-      setUpContactForm();
-      setUpYear();
-      setUpRevealAnimations();
-    } catch (error) {
-      // Keep the page readable even if one interaction fails.
-      document.documentElement.classList.remove("js-ready");
-      document.documentElement.setAttribute("data-js-loaded", "error");
-      if (window.console && console.error) {
-        console.error("TensorSlow Academy JavaScript error:", error);
+  function initialise() {
+    // Initialise each feature independently so one error cannot disable the whole website.
+    var initialisers = [
+      setUpNavigation,
+      setUpSubjectFilters,
+      setUpFaq,
+      setUpInterestLinks,
+      setUpContactDetails,
+      setUpYouTubeLinks,
+      setUpContactForm,
+      setUpYear,
+      setUpRevealAnimations
+    ];
+
+    initialisers.forEach(function (initialiser) {
+      try {
+        initialiser();
+      } catch (error) {
+        if (window.console && console.error) console.error("TensorSlow feature failed:", initialiser.name, error);
       }
-    }
-  });
+    });
+
+    window.TensorSlowAcademyReady = true;
+    document.documentElement.setAttribute("data-js-loaded", "true");
+    document.documentElement.setAttribute("data-js-source", "script.js");
+  }
+
+  onReady(initialise);
 })();
