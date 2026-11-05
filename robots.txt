@@ -1,4 +1,7 @@
+User-agent: Googlebot
+Disallow: /nogooglebot/
+
 User-agent: *
 Allow: /
 
-Sitemap: https://loveymishra.github.io/Tensorslow/sitemap_index.xml
+Sitemap: https://loveymishra.github.io/Tensorslow/sitemap.xml
