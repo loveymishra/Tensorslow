@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://loveymishra.github.io/Tensorslow/sitemap.xml
+Sitemap: https://loveymishra.github.io/Tensorslow/sitemap_index.xml
